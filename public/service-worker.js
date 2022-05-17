@@ -43,10 +43,10 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
     console.log(`Fetch request : ${e.request.url}`);
     e.respondWith(
-        caches.match(e.request).then(function(request) {
-            if (request) {
+        caches.match(e.request).then(function(response) {
+            if (response) {
                 console.log('responding with cache : ' + e.request.url)
-                return request
+                return response
             } else {
                 console.log('file is not cached, fetching : ' + e.request.url)
                 return fetch(e.request)
