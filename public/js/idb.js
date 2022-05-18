@@ -77,6 +77,12 @@ function uploadData() {
                 // Clear store
                 recordObjectStore.clear();
 
+                if (localStorage.getItem('notifpermission') === 'true') {
+                    sendNotification(true);
+                } else {
+                    return console.log('notifpermission not true');
+                }
+
                 console.log('IndexedDB stored data sent to server.');
             })
             .catch(err => console.log(err));
