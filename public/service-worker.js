@@ -1,7 +1,8 @@
 const FILES_TO_CACHE = [
     './index.html',
     './js/index.js',
-    './css/styles.css'
+    './css/styles.css',
+    './js/idb.js'
 ];
 
 const APP_PREFIX = 'Budget_tracker-';
@@ -43,7 +44,7 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
     console.log(`Fetch request : ${e.request.url}`);
     e.respondWith(
-        caches.match(e.request).then(function(response) {
+        caches.match(e.request, { ignoreVary: true }).then(function(response) {
             if (response) {
                 console.log('responding with cache : ' + e.request.url)
                 return response
