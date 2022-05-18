@@ -14,6 +14,40 @@ fetch("/api/transaction")
     populateChart();
   });
 
+// Request permission for notifications
+function reqPermission() {
+  if (!localStorage.getItem('notifpermission')) {
+    console.log('notifpermission not found in localStorage');
+    Notification.requestPermission().then(result => {
+      if (result == 'granted') {
+        localStorage.setItem('notifpermission', 'true');
+      } else {
+        localStorage.setItem('notifpermission', 'false');
+      }
+    });
+  } else {
+    console.log('notifpermission found in localStorage');
+  }
+};
+
+function sendNotification(permissionAccepted) {
+  if (permissionAccepted) {
+    const notifTitle = 'Transaction received!';
+    const notifBody = 'We have successfully sent your transaction and it was received by the server.';
+    const notifImg = '../icons/icon-72x72.png';
+
+    const options = {
+      body: notifBody,
+      icon: notifImg
+    };
+
+    console.log('sending notification');
+    return new Notification(notifTitle, options);
+  }
+  console.log('not sending notification');
+  return;
+};
+
 function populateTotal() {
   // reduce transaction amounts to a single total value
   let total = transactions.reduce((total, t) => {
@@ -134,6 +168,13 @@ function sendTransaction(isAdding) {
       amountEl.value = "";
     }
   })
+  .then(() => {
+    if (localStorage.getItem('notifpermission') === 'true') {
+      sendNotification(true);
+    } else {
+      return console.log('notifpermission not true');
+    }
+  })
   .catch(err => {
     // fetch failed, so save in indexed db
     saveRecord(transaction);
@@ -151,3 +192,5 @@ document.querySelector("#add-btn").onclick = function() {
 document.querySelector("#sub-btn").onclick = function() {
   sendTransaction(false);
 };
+
+reqPermission();
